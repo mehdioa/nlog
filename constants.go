@@ -47,22 +47,22 @@ var levelColor = map[Level]int{
 }
 
 // Convert the Level to a string. E.g. PanicLevel becomes "panic".
-func (level Level) String() string {
-	switch level {
-	case DebugLevel:
-		return "debug"
-	case InfoLevel:
-		return "info"
-	case WarnLevel:
-		return "warning"
-	case ErrorLevel:
-		return "error"
-	case PanicLevel:
-		return "panic"
-	}
+//func (level Level) String() string {
+//	switch level {
+//	case DebugLevel:
+//		return "debug"
+//	case InfoLevel:
+//		return "info"
+//	case WarnLevel:
+//		return "warning"
+//	case ErrorLevel:
+//		return "error"
+//	case PanicLevel:
+//		return "panic"
+//	}
 
-	return "unknown"
-}
+//	return "unknown"
+//}
 
 var isTerminal bool
 
@@ -75,18 +75,18 @@ var (
 
 func init() {
 	isTerminal = checkIsTerminal()
-	if isTerminal {
-		headerFormat = "\x1b[%dm%s\x1b[0m[%s] %-44s \x1b[%dmcaller\x1b[0m=%s "
-		msgFormat = "\x1b[%dm%s\x1b[0m[%s] %-44s "
-		parentFormat = "\x1b[%dm%s\x1b[0m={"
-		dataFormat = "\x1b[%dm%s\x1b[0m=%+v "
+	//	if isTerminal {
+	//		headerFormat = "\x1b[%dm%s\x1b[0m[%s] %-44s \x1b[%dmcaller\x1b[0m=%s "
+	//		msgFormat = "\x1b[%dm%s\x1b[0m[%s] %-44s "
+	//		parentFormat = "\x1b[%dm%s\x1b[0m={"
+	//		dataFormat = "\x1b[%dm%s\x1b[0m=%+v "
 
-	} else {
-		headerFormat = "%s[%s] %-44s caller=%s "
-		msgFormat = "%s[%s] %-44s "
-		parentFormat = "%s={"
-		dataFormat = "%s=%+v "
-	}
+	//	} else {
+	//		headerFormat = "%s[%s] %-44s caller=%s "
+	//		msgFormat = "%s[%s] %-44s "
+	//		parentFormat = "%s={"
+	//		dataFormat = "%s=%+v "
+	//	}
 }
 
 func checkIsTerminal() bool {

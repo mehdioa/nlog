@@ -45,7 +45,7 @@ func NewLogger() *Logger {
 }
 
 func (logger *Logger) New(data Data) *node {
-	return &node{logger: logger, parent: nil, data: data, key: "Data"}
+	return &node{logger: logger, Node: nil, Data: data, key: "Data"}
 }
 
 func (logger *Logger) SetFormatter(formatter Formatter) {
@@ -72,23 +72,23 @@ func (logger *Logger) SetShowCaller(b bool) {
 	logger.showCaller = b
 }
 
-func (logger *Logger) Debug(msg string, ctx ...interface{}) {
+func (logger *Logger) Debug(msg string, data Data) {
 	if logger.level >= DebugLevel {
-		log(&message{msg: &msg, level: DebugLevel}, &node{logger: logger})
+		log(&message{Message: &msg, Level: DebugLevel}, &node{logger: logger, Data: data})
 	}
 }
-func (logger *Logger) Info(msg string, ctx ...interface{}) {
+func (logger *Logger) Info(msg string, data Data) {
 	if logger.level >= InfoLevel {
-		log(&message{msg: &msg, level: InfoLevel}, &node{logger: logger})
+		log(&message{Message: &msg, Level: InfoLevel}, &node{logger: logger, Data: data})
 	}
 }
-func (logger *Logger) Warn(msg string, ctx ...interface{}) {
+func (logger *Logger) Warn(msg string, data Data) {
 	if logger.level >= WarnLevel {
-		log(&message{msg: &msg, level: WarnLevel}, &node{logger: logger})
+		log(&message{Message: &msg, Level: WarnLevel}, &node{logger: logger, Data: data})
 	}
 }
-func (logger *Logger) Error(msg string, ctx ...interface{}) {
+func (logger *Logger) Error(msg string, data Data) {
 	if logger.level >= ErrorLevel {
-		log(&message{msg: &msg, level: ErrorLevel}, &node{logger: logger})
+		log(&message{Message: &msg, Level: ErrorLevel}, &node{logger: logger, Data: data})
 	}
 }

@@ -5,27 +5,33 @@ import (
 	"fmt"
 	"io"
 	"os"
-	//	"time"
 )
 
 type Data map[string]interface{}
 
 type message struct {
-	msg *string
+	Message *string
 	//	caller string
-	level Level
+	Level
 	//	time   time.Time
 }
 
 type node struct {
-	key    string
-	data   Data
-	parent *node
+	key string
+	Data
+	Node   *node
 	logger *Logger
 }
 
+type _message struct {
+	Time    string
+	Message *string
+	Level   string
+	Node    *node
+}
+
 func (n *node) NewNode(key string, data Data) *node {
-	return &node{key: key, data: data, parent: n, logger: n.logger}
+	return &node{key: key, Data: data, Node: n, logger: n.logger}
 }
 
 // This function is not declared with a pointer value because otherwise
@@ -54,28 +60,28 @@ func log(m *message, n *node) {
 	// To avoid Entry#log() returning a value that only would make sense for
 	// panic() to use in Entry#Panic(), we avoid the allocation by checking
 	// directly here.
-	if m.level <= PanicLevel {
+	if m.Level <= PanicLevel {
 		panic(&err)
 	}
 }
 
 func (n *node) Debug(msg string, data ...interface{}) {
 	if n.logger.level >= DebugLevel {
-		log(&message{msg: &msg, level: DebugLevel}, n)
+		log(&message{Message: &msg, Level: DebugLevel}, n)
 	}
 }
 func (n *node) Info(msg string, data ...interface{}) {
 	if n.logger.level >= InfoLevel {
-		log(&message{msg: &msg, level: InfoLevel}, n)
+		log(&message{Message: &msg, Level: InfoLevel}, n)
 	}
 }
 func (n *node) Warn(msg string, data ...interface{}) {
 	if n.logger.level >= WarnLevel {
-		log(&message{msg: &msg, level: WarnLevel}, n)
+		log(&message{Message: &msg, Level: WarnLevel}, n)
 	}
 }
 func (n *node) Error(msg string, data ...interface{}) {
 	if n.logger.level >= ErrorLevel {
-		log(&message{msg: &msg, level: ErrorLevel}, n)
+		log(&message{Message: &msg, Level: ErrorLevel}, n)
 	}
 }

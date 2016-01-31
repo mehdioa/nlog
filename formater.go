@@ -2,6 +2,7 @@ package nlog
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"path/filepath"
 	"runtime"
@@ -30,16 +31,16 @@ func NewTEXTFormatter() *textFormatter {
 	if isTerminal {
 		t.fmt = func(nd *node, msg *message, buf *bytes.Buffer) (err error) {
 			if msg != nil {
-				lc := levelColor[msg.level]
+				lc := levelColor[msg.Level]
 				if nd.logger.showCaller {
-					_, err = fmt.Fprintf(buf, "\x1b[%dm%s\x1b[0m[%s] %-44s \x1b[%dmcaller\x1b[0m=%s", lc, levelString[msg.level], time.Now().Format(t.TimestampFormat), *msg.msg, lc, caller(5))
+					_, err = fmt.Fprintf(buf, "\x1b[%dm%s\x1b[0m[%s] %-44s \x1b[%dmcaller\x1b[0m=%s", lc, levelString[msg.Level], time.Now().Format(t.TimestampFormat), *msg.Message, lc, caller(5))
 				} else {
-					_, err = fmt.Fprintf(buf, "\x1b[%dm%s\x1b[0m[%s] %-44s", lc, levelString[msg.level], time.Now().Format(t.TimestampFormat), *msg.msg)
+					_, err = fmt.Fprintf(buf, "\x1b[%dm%s\x1b[0m[%s] %-44s", lc, levelString[msg.Level], time.Now().Format(t.TimestampFormat), *msg.Message)
 				}
 				if err != nil {
 					return err
 				}
-				if len(nd.data) > 0 || nd.parent != nil {
+				if len(nd.Data) > 0 || nd.Node != nil {
 					err = t.fmtParent(nd, lc, buf, "data")
 					if err != nil {
 						return err
@@ -61,7 +62,7 @@ func NewTEXTFormatter() *textFormatter {
 					return
 				}
 				first := true
-				for k, v := range nd.data {
+				for k, v := range nd.Data {
 					if first {
 						_, err = fmt.Fprintf(buf, "\x1b[%dm%s\x1b[0m=%+v", lc, k, v)
 						first = false
@@ -75,7 +76,7 @@ func NewTEXTFormatter() *textFormatter {
 						return
 					}
 				}
-				err = t.fmtParent(nd.parent, lc, buf, nd.key)
+				err = t.fmtParent(nd.Node, lc, buf, nd.key)
 				if err != nil {
 					return
 				}
@@ -88,16 +89,16 @@ func NewTEXTFormatter() *textFormatter {
 		t.fmt = func(nd *node, msg *message, buf *bytes.Buffer) (err error) {
 			err = nil
 			if msg != nil {
-				lc := levelColor[msg.level]
+				lc := levelColor[msg.Level]
 				if nd.logger.showCaller {
-					_, err = fmt.Fprintf(buf, "%s[%s] %-44s caller=%s", levelString[msg.level], time.Now().Format(t.TimestampFormat), *msg.msg, caller(5))
+					_, err = fmt.Fprintf(buf, "%s[%s] %-44s caller=%s", levelString[msg.Level], time.Now().Format(t.TimestampFormat), *msg.Message, caller(5))
 				} else {
-					_, err = fmt.Fprintf(buf, "%s[%s] %-44s", levelString[msg.level], time.Now().Format(t.TimestampFormat), *msg.msg)
+					_, err = fmt.Fprintf(buf, "%s[%s] %-44s", levelString[msg.Level], time.Now().Format(t.TimestampFormat), *msg.Message)
 				}
 				if err != nil {
 					return
 				}
-				if len(nd.data) > 0 || nd.parent != nil {
+				if len(nd.Data) > 0 || nd.Node != nil {
 					err = t.fmtParent(nd, lc, buf, "data")
 					if err != nil {
 						return
@@ -116,7 +117,7 @@ func NewTEXTFormatter() *textFormatter {
 					return
 				}
 				first := true
-				for k, v := range nd.data {
+				for k, v := range nd.Data {
 					if first {
 						_, err = fmt.Fprintf(buf, "%s=%+v", k, v)
 						first = false
@@ -127,7 +128,7 @@ func NewTEXTFormatter() *textFormatter {
 						return
 					}
 				}
-				err = t.fmtParent(nd.parent, lc, buf, nd.key)
+				err = t.fmtParent(nd.Node, lc, buf, nd.key)
 				if err != nil {
 					return
 				}
@@ -145,24 +146,10 @@ type JSONFormatter struct {
 }
 
 func (f *JSONFormatter) Format(nd *node, msg *message, buf *bytes.Buffer) (err error) {
-	err = nil
-	_, err = fmt.Fprintf(buf, `{"time": "%v", "level": "%s", "message": "%s"`, time.Now().Format(f.TimestampFormat), levelString[msg.level], *msg.msg)
-	if err != nil {
-		return
-	}
-	if nd.logger.showCaller {
-		_, err = fmt.Fprintf(buf, `, "caller":"%s"`, caller(4))
-	}
-	if err != nil {
-		return
-	}
-	if len(nd.data) > 0 || nd.parent != nil {
-		err = f.fmtParent(nd, buf, "data")
-		if err != nil {
-			return
-		}
-	}
-	_, err = buf.WriteString("}\n")
+	_msg := &_message{Time: time.Now().Format(f.TimestampFormat), Message: msg.Message, Level: levelString[msg.Level], Node: nd}
+	s, err := json.Marshal(_msg)
+	_, err = buf.Write(s)
+	err = buf.WriteByte('\n')
 	return
 }
 
@@ -173,9 +160,9 @@ func (f *JSONFormatter) fmtParent(nd *node, buf *bytes.Buffer, key string) (err 
 		if err != nil {
 			return
 		}
-		l := len(nd.data)
+		l := len(nd.Data)
 		i := 0
-		for k, v := range nd.data {
+		for k, v := range nd.Data {
 			i = i + 1
 			switch v := v.(type) {
 			case string:
@@ -197,7 +184,7 @@ func (f *JSONFormatter) fmtParent(nd *node, buf *bytes.Buffer, key string) (err 
 				return
 			}
 		}
-		err = f.fmtParent(nd.parent, buf, nd.key)
+		err = f.fmtParent(nd.Node, buf, nd.key)
 		if err != nil {
 			return
 		}
