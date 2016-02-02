@@ -41,6 +41,27 @@ func NewTEXTFormatter() *textFormatter {
 				if err != nil {
 					return
 				}
+				if msg.Data != nil && len(msg.Data) > 0 {
+					if _, err = fmt.Fprintf(buf, " \x1b[%dm%s\x1b[0m={", lc, keyString); err != nil {
+						return
+					}
+					first := true
+					for k, v := range msg.Data {
+						if first {
+							_, err = fmt.Fprintf(buf, "\x1b[%dm%s\x1b[0m=%+v", lc, k, v)
+							first = false
+						} else {
+							_, err = fmt.Fprintf(buf, " \x1b[%dm%s\x1b[0m=%+v", lc, k, v)
+						}
+						if err != nil {
+							return
+						}
+					}
+					if err = buf.WriteByte('}'); err != nil {
+						return
+					}
+				}
+
 				nd := msg.Node
 				i := 0
 				for nd != nil {
@@ -83,6 +104,26 @@ func NewTEXTFormatter() *textFormatter {
 				}
 				if err != nil {
 					return
+				}
+				if msg.Data != nil && len(msg.Data) > 0 {
+					if _, err = fmt.Fprintf(buf, " %s={", keyString); err != nil {
+						return
+					}
+					first := true
+					for k, v := range msg.Data {
+						if first {
+							_, err = fmt.Fprintf(buf, "%s=%+v", k, v)
+							first = false
+						} else {
+							_, err = fmt.Fprintf(buf, " %s=%+v", k, v)
+						}
+						if err != nil {
+							return
+						}
+					}
+					if err = buf.WriteByte('}'); err != nil {
+						return
+					}
 				}
 				nd := msg.Node
 				i := 0

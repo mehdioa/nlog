@@ -31,20 +31,8 @@ const (
 	lastIndexLevel
 )
 
-var levelString = map[Level]string{
-	DebugLevel: "DEBU",
-	InfoLevel:  "INFO",
-	WarnLevel:  "WARN",
-	ErrorLevel: "ERRO",
-	PanicLevel: "PANI",
-}
-var levelColor = map[Level]int{
-	DebugLevel: 37,
-	InfoLevel:  34,
-	WarnLevel:  33,
-	ErrorLevel: 31,
-	PanicLevel: 31,
-}
+var levelString = []string{"PANI", "ERRO", "WARN", "INFO", "DEBU"}
+var levelColor = []int{31, 31, 33, 34, 37}
 
 // Convert the Level to a string. E.g. PanicLevel becomes "panic".
 //func (level Level) String() string {
@@ -66,27 +54,8 @@ var levelColor = map[Level]int{
 
 var isTerminal bool
 
-var (
-	headerFormat string
-	msgFormat    string
-	parentFormat string
-	dataFormat   string
-)
-
 func init() {
 	isTerminal = checkIsTerminal()
-	//	if isTerminal {
-	//		headerFormat = "\x1b[%dm%s\x1b[0m[%s] %-44s \x1b[%dmcaller\x1b[0m=%s "
-	//		msgFormat = "\x1b[%dm%s\x1b[0m[%s] %-44s "
-	//		parentFormat = "\x1b[%dm%s\x1b[0m={"
-	//		dataFormat = "\x1b[%dm%s\x1b[0m=%+v "
-
-	//	} else {
-	//		headerFormat = "%s[%s] %-44s caller=%s "
-	//		msgFormat = "%s[%s] %-44s "
-	//		parentFormat = "%s={"
-	//		dataFormat = "%s=%+v "
-	//	}
 }
 
 func checkIsTerminal() bool {

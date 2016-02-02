@@ -77,27 +77,27 @@ func (n *node) Error(msg string, data Data) {
 		log(&message{Message: &msg, Level: ErrorLevel, logger: n.logger, Node: n, Data: data})
 	}
 }
-func (n *node) Debugf(args ...interface{}) {
+func (n *node) Debugf(f string, args ...interface{}) {
 	if n.logger.level >= DebugLevel {
-		msg := fmt.Sprint(args...)
+		msg := fmt.Sprintf(f, args...)
 		log(&message{Message: &msg, Level: DebugLevel, logger: n.logger, Node: n, Data: nil})
 	}
 }
-func (n *node) Infof(args ...interface{}) {
+func (n *node) Infof(f string, args ...interface{}) {
 	if n.logger.level >= InfoLevel {
-		msg := fmt.Sprint(args...)
+		msg := fmt.Sprintf(f, args...)
 		log(&message{Message: &msg, Level: InfoLevel, logger: n.logger, Node: n, Data: nil})
 	}
 }
-func (n *node) Warnf(args ...interface{}) {
+func (n *node) Warnf(f string, args ...interface{}) {
 	if n.logger.level >= WarnLevel {
-		msg := fmt.Sprint(args...)
+		msg := fmt.Sprintf(f, args...)
 		log(&message{Message: &msg, Level: WarnLevel, logger: n.logger, Node: n, Data: nil})
 	}
 }
-func (n *node) Errorf(args ...interface{}) {
+func (n *node) Errorf(f string, args ...interface{}) {
 	if n.logger.level >= ErrorLevel {
-		msg := fmt.Sprint(args...)
+		msg := fmt.Sprintf(f, args...)
 		log(&message{Message: &msg, Level: ErrorLevel, logger: n.logger, Node: n, Data: nil})
 	}
 }
