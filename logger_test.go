@@ -35,7 +35,7 @@ func LogAndAssertText(t *testing.T) {
 	logger.SetOut(os.Stdout)
 
 	n := logger.New(Data{"first": 1, "Second": "second"})
-	n.Debug("Hello")
+	n.Debug("Hello", nil)
 	assert.True(t, true, true)
 }
 

@@ -34,7 +34,7 @@ func NewTEXTFormatter() *textFormatter {
 			ls := levelString[msg.Level]
 			if msg != nil {
 				lc := levelColor[msg.Level]
-				if msg.Node.logger.showCaller {
+				if msg.logger.showCaller {
 					_, err = fmt.Fprintf(buf, "\x1b[%dm%s\x1b[0m[%s] %-44s \x1b[%dmcaller\x1b[0m=%s", lc, ls, formattedTime, *msg.Message, lc, caller(5))
 				} else {
 					_, err = fmt.Fprintf(buf, "\x1b[%dm%s\x1b[0m[%s] %-44s", lc, ls, formattedTime, *msg.Message)
@@ -42,11 +42,9 @@ func NewTEXTFormatter() *textFormatter {
 				if err != nil {
 					return
 				}
-				if msg.Node != nil && len(nd.Data) > 0 || nd.Node != nil {
-					err = t.fmtParent(nd, lc, buf, &ls)
-					if err != nil {
-						return
-					}
+				err = t.fmtParent(msg.Node, lc, buf, &ls)
+				if err != nil {
+					return
 				}
 				err = buf.WriteByte('\n')
 			}
@@ -71,9 +69,6 @@ func NewTEXTFormatter() *textFormatter {
 					if err != nil {
 						return
 					}
-					if err != nil {
-						return
-					}
 				}
 				err = t.fmtParent(nd.Node, lc, buf, ls)
 				if err != nil {
@@ -85,12 +80,12 @@ func NewTEXTFormatter() *textFormatter {
 		}
 
 	} else {
-		t.fmt = func(nd *node, msg *message, buf *bytes.Buffer) (err error) {
+		t.fmt = func(msg *message, buf *bytes.Buffer) (err error) {
 			err = nil
 			if msg != nil {
 				lc := levelColor[msg.Level]
 				ls := levelString[msg.Level]
-				if nd.logger.showCaller {
+				if msg.logger.showCaller {
 					_, err = fmt.Fprintf(buf, "%s[%s] %-44s caller=%s", ls, formattedTime, *msg.Message, caller(5))
 				} else {
 					_, err = fmt.Fprintf(buf, "%s[%s] %-44s", ls, formattedTime, *msg.Message)
@@ -98,11 +93,9 @@ func NewTEXTFormatter() *textFormatter {
 				if err != nil {
 					return
 				}
-				if len(nd.Data) > 0 || nd.Node != nil {
-					err = t.fmtParent(nd, lc, buf, &ls)
-					if err != nil {
-						return
-					}
+				err = t.fmtParent(msg.Node, lc, buf, &ls)
+				if err != nil {
+					return
 				}
 				err = buf.WriteByte('\n')
 			}
@@ -145,8 +138,8 @@ type JSONFormatter struct {
 	TimestampFormat string
 }
 
-func (f *JSONFormatter) Format(nd *node, msg *message, buf *bytes.Buffer) (err error) {
-	_msg := &_message{Time: time.Now().Format(f.TimestampFormat), Message: msg.Message, Level: levelString[msg.Level], Node: nd}
+func (f *JSONFormatter) Format(msg *message, buf *bytes.Buffer) (err error) {
+	_msg := &_message{Time: time.Now().Format(f.TimestampFormat), Message: msg.Message, Level: levelString[msg.Level], Node: msg.Node}
 	s, err := json.Marshal(_msg)
 	_, err = buf.Write(s)
 	err = buf.WriteByte('\n')

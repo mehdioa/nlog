@@ -2,6 +2,7 @@
 package nlog
 
 import (
+	"fmt"
 	//	"fmt"
 	"io"
 	"os"
@@ -76,21 +77,45 @@ func (logger *Logger) SetShowCaller(b bool) {
 
 func (logger *Logger) Debug(msg string, data Data) {
 	if logger.level >= DebugLevel {
-		log(&message{Message: &msg, Level: DebugLevel}, &node{logger: logger, Data: data, key: keyString})
+		log(&message{Message: &msg, Level: DebugLevel, Data: data, Node: nil, logger: logger})
 	}
 }
 func (logger *Logger) Info(msg string, data Data) {
 	if logger.level >= InfoLevel {
-		log(&message{Message: &msg, Level: InfoLevel}, &node{logger: logger, Data: data, key: keyString})
+		log(&message{Message: &msg, Level: InfoLevel, Data: data, Node: nil, logger: logger})
 	}
 }
 func (logger *Logger) Warn(msg string, data Data) {
 	if logger.level >= WarnLevel {
-		log(&message{Message: &msg, Level: WarnLevel}, &node{logger: logger, Data: data, key: keyString})
+		log(&message{Message: &msg, Level: WarnLevel, Data: data, Node: nil, logger: logger})
 	}
 }
 func (logger *Logger) Error(msg string, data Data) {
 	if logger.level >= ErrorLevel {
-		log(&message{Message: &msg, Level: ErrorLevel}, &node{logger: logger, Data: data, key: keyString})
+		log(&message{Message: &msg, Level: ErrorLevel, Data: data, Node: nil, logger: logger})
+	}
+}
+func (logger *Logger) Debugf(args ...interface{}) {
+	if logger.level >= DebugLevel {
+		m := fmt.Sprint(args...)
+		log(&message{Message: &m, Level: DebugLevel, Data: nil, Node: nil, logger: logger})
+	}
+}
+func (logger *Logger) Infof(args ...interface{}) {
+	if logger.level >= InfoLevel {
+		m := fmt.Sprint(args...)
+		log(&message{Message: &m, Level: InfoLevel, Data: nil, Node: nil, logger: logger})
+	}
+}
+func (logger *Logger) Warnf(args ...interface{}) {
+	if logger.level >= WarnLevel {
+		m := fmt.Sprint(args...)
+		log(&message{Message: &m, Level: WarnLevel, Data: nil, Node: nil, logger: logger})
+	}
+}
+func (logger *Logger) Errorf(args ...interface{}) {
+	if logger.level >= ErrorLevel {
+		m := fmt.Sprint(args...)
+		log(&message{Message: &m, Level: ErrorLevel, Data: nil, Node: nil, logger: logger})
 	}
 }
