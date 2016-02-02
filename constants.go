@@ -95,3 +95,7 @@ func checkIsTerminal() bool {
 	_, _, err := syscall.Syscall6(syscall.SYS_IOCTL, uintptr(fd), syscall.TCGETS, uintptr(unsafe.Pointer(&termios)), 0, 0, 0)
 	return err == 0
 }
+
+func SetIsTerminal(b bool) {
+	isTerminal = b
+}

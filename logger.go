@@ -3,7 +3,6 @@ package nlog
 
 import (
 	"fmt"
-	//	"fmt"
 	"io"
 	"os"
 	"sync"
@@ -47,8 +46,8 @@ func NewLogger() *Logger {
 	}
 }
 
-func (logger *Logger) New(data Data) *node {
-	return &node{logger: logger, Node: nil, Data: data, key: "Data"}
+func (logger *Logger) New(key string, data Data) *node {
+	return &node{logger: logger, Node: nil, Data: data, key: key}
 }
 
 func (logger *Logger) SetFormatter(formatter Formatter) {

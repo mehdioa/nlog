@@ -20,11 +20,14 @@ func main() {
 	check(logger)
 	logger.SetFormatter(&log.JSONFormatter{TimestampFormat: time.Stamp})
 	check(logger)
-
+	log.SetIsTerminal(false)
+	f = log.NewTEXTFormatter()
+	logger.SetFormatter(f)
+	check(logger)
 }
 
 func check(logger *log.Logger) {
-	m := logger.New(log.Data{"first": 1, "Second": "second"})
+	m := logger.New("Data", log.Data{"first": 1, "Second": "second"})
 	m.Debug("Hello", nil)
 	n := m.NewNode("parent", log.Data{"alef": nil, "yek": errors.New("my error")})
 	n.Debug("Hello", nil)

@@ -80,3 +80,36 @@ func BenchmarkTextComplex(b *testing.B) {
 	}
 	b.StopTimer()
 }
+func BenchmarkTerminalSimple(b *testing.B) {
+	l := NewLogger()
+	SetIsTerminal(false)
+	l.SetFormatter(NewTEXTFormatter())
+	l.SetOut(os.Stdout)
+	l.SetShowCaller(false)
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		l.Debug("debug", Data{"key": 1, "key2": "string", "key3": false})
+		l.Info("info", Data{"key": 1, "key2": "string", "key3": false})
+		l.Warn("warn", Data{"key": 1, "key2": "string", "key3": false})
+		l.Error("error", Data{"key": 1, "key2": "string", "key3": false})
+	}
+	b.StopTimer()
+}
+
+func BenchmarkTerminalComplex(b *testing.B) {
+	l := NewLogger()
+	SetIsTerminal(false)
+	l.SetFormatter(NewTEXTFormatter())
+	l.SetOut(os.Stdout)
+	l.SetShowCaller(false)
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		l.Debug("debug", Data{"key": 1, "obj": testObject})
+		l.Info("info", Data{"key": 1, "obj": testObject})
+		l.Warn("warn", Data{"key": 1, "obj": testObject})
+		l.Error("error", Data{"key": 1, "obj": testObject})
+	}
+	b.StopTimer()
+}

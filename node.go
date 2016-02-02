@@ -10,11 +10,9 @@ import (
 type Data map[string]interface{}
 
 type message struct {
+	Level
 	Time    string
 	Message *string
-	//	caller string
-	Level
-	//	time   time.Time
 	Data
 	Node   *node
 	logger *Logger
@@ -28,9 +26,9 @@ type node struct {
 }
 
 type _message struct {
+	Level   string
 	Time    string
 	Message *string
-	Level   string
 	Data
 	Node *node
 }
@@ -39,11 +37,7 @@ func (n *node) NewNode(key string, data Data) *node {
 	return &node{key: key, Data: data, Node: n, logger: n.logger}
 }
 
-// This function is not declared with a pointer value because otherwise
-// race conditions will occur when using multiple goroutines
 func log(m *message) {
-	//	m := &message{msg: msg, level: level, time: time.Now()}
-	//	m.time = time.Now()
 	buf := pool.Get()
 	defer pool.Put(buf)
 
@@ -60,13 +54,6 @@ func log(m *message) {
 	_, err = io.Copy(m.logger.out, buf)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to write to log, %v\n", err)
-	}
-
-	// To avoid Entry#log() returning a value that only would make sense for
-	// panic() to use in Entry#Panic(), we avoid the allocation by checking
-	// directly here.
-	if m.Level <= PanicLevel {
-		panic(&err)
 	}
 }
 
