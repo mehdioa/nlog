@@ -10,10 +10,13 @@ import (
 type Data map[string]interface{}
 
 type message struct {
+	Time    string
 	Message *string
 	//	caller string
 	Level
 	//	time   time.Time
+	Data
+	Node *node
 }
 
 type node struct {
@@ -27,7 +30,8 @@ type _message struct {
 	Time    string
 	Message *string
 	Level   string
-	Node    *node
+	Data
+	Node *node
 }
 
 func (n *node) NewNode(key string, data Data) *node {
@@ -65,22 +69,22 @@ func log(m *message, n *node) {
 	}
 }
 
-func (n *node) Debug(msg string, data ...interface{}) {
+func (n *node) Debug(msg string, data Data) {
 	if n.logger.level >= DebugLevel {
 		log(&message{Message: &msg, Level: DebugLevel}, n)
 	}
 }
-func (n *node) Info(msg string, data ...interface{}) {
+func (n *node) Info(msg string, data Data) {
 	if n.logger.level >= InfoLevel {
 		log(&message{Message: &msg, Level: InfoLevel}, n)
 	}
 }
-func (n *node) Warn(msg string, data ...interface{}) {
+func (n *node) Warn(msg string, data Data) {
 	if n.logger.level >= WarnLevel {
 		log(&message{Message: &msg, Level: WarnLevel}, n)
 	}
 }
-func (n *node) Error(msg string, data ...interface{}) {
+func (n *node) Error(msg string, data Data) {
 	if n.logger.level >= ErrorLevel {
 		log(&message{Message: &msg, Level: ErrorLevel}, n)
 	}

@@ -31,8 +31,8 @@ func check(logger *log.Logger) {
 	n.Info("Hello")
 	n.Warn("Hello")
 	n.Error("Hello")
-	logger.Debug("Hello", nil)
-	logger.Info("Hello", nil)
-	logger.Warn("Hello", nil)
+	logger.Debug("Hello")
+	logger.Info("Hello")
+	logger.Warn("Hello")
 	logger.Error("Hello", log.Data{"alef": nil, "yek": errors.New("my error")})
 }

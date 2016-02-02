@@ -12,52 +12,51 @@ import (
 const DefaultTimestampFormat = "2006-01-02 15:04:05"
 
 type Formatter interface {
-	Format(*node, *message, *bytes.Buffer) error
+	Format(*message, *bytes.Buffer) error
 }
 
 type textFormatter struct {
 	// TimestampFormat sets the format used for marshaling timestamps.
 	TimestampFormat string
-	fmt             func(*node, *message, *bytes.Buffer) error
-	fmtParent       func(nd *node, lc int, buf *bytes.Buffer, key string) error
+	fmt             func(*message, *bytes.Buffer) error
+	fmtParent       func(nd *node, lc int, buf *bytes.Buffer, ls *string) error
 }
 
-func (f *textFormatter) Format(nd *node, msg *message, buf *bytes.Buffer) error {
-	return f.fmt(nd, msg, buf)
+func (f *textFormatter) Format(msg *message, buf *bytes.Buffer) error {
+	return f.fmt(msg, buf)
 }
 
 func NewTEXTFormatter() *textFormatter {
 	t := &textFormatter{TimestampFormat: DefaultTimestampFormat}
+	formattedTime := time.Now().Format(t.TimestampFormat)
 	if isTerminal {
-		t.fmt = func(nd *node, msg *message, buf *bytes.Buffer) (err error) {
+		t.fmt = func(msg *message, buf *bytes.Buffer) (err error) {
+			ls := levelString[msg.Level]
 			if msg != nil {
 				lc := levelColor[msg.Level]
-				if nd.logger.showCaller {
-					_, err = fmt.Fprintf(buf, "\x1b[%dm%s\x1b[0m[%s] %-44s \x1b[%dmcaller\x1b[0m=%s", lc, levelString[msg.Level], time.Now().Format(t.TimestampFormat), *msg.Message, lc, caller(5))
+				if msg.Node.logger.showCaller {
+					_, err = fmt.Fprintf(buf, "\x1b[%dm%s\x1b[0m[%s] %-44s \x1b[%dmcaller\x1b[0m=%s", lc, ls, formattedTime, *msg.Message, lc, caller(5))
 				} else {
-					_, err = fmt.Fprintf(buf, "\x1b[%dm%s\x1b[0m[%s] %-44s", lc, levelString[msg.Level], time.Now().Format(t.TimestampFormat), *msg.Message)
+					_, err = fmt.Fprintf(buf, "\x1b[%dm%s\x1b[0m[%s] %-44s", lc, ls, formattedTime, *msg.Message)
 				}
 				if err != nil {
-					return err
+					return
 				}
-				if len(nd.Data) > 0 || nd.Node != nil {
-					err = t.fmtParent(nd, lc, buf, "data")
+				if msg.Node != nil && len(nd.Data) > 0 || nd.Node != nil {
+					err = t.fmtParent(nd, lc, buf, &ls)
 					if err != nil {
-						return err
+						return
 					}
 				}
 				err = buf.WriteByte('\n')
-				if err != nil {
-					return err
-				}
 			}
-			return nil
+			return
 		}
 
-		t.fmtParent = func(nd *node, lc int, buf *bytes.Buffer, key string) (err error) {
+		t.fmtParent = func(nd *node, lc int, buf *bytes.Buffer, ls *string) (err error) {
 			err = nil
 			if nd != nil {
-				_, err = fmt.Fprintf(buf, " \x1b[%dm%s\x1b[0m={", lc, key)
+				_, err = fmt.Fprintf(buf, " \x1b[%dm%s\x1b[0m={", lc, nd.key)
 				if err != nil {
 					return
 				}
@@ -76,7 +75,7 @@ func NewTEXTFormatter() *textFormatter {
 						return
 					}
 				}
-				err = t.fmtParent(nd.Node, lc, buf, nd.key)
+				err = t.fmtParent(nd.Node, lc, buf, ls)
 				if err != nil {
 					return
 				}
@@ -90,16 +89,17 @@ func NewTEXTFormatter() *textFormatter {
 			err = nil
 			if msg != nil {
 				lc := levelColor[msg.Level]
+				ls := levelString[msg.Level]
 				if nd.logger.showCaller {
-					_, err = fmt.Fprintf(buf, "%s[%s] %-44s caller=%s", levelString[msg.Level], time.Now().Format(t.TimestampFormat), *msg.Message, caller(5))
+					_, err = fmt.Fprintf(buf, "%s[%s] %-44s caller=%s", ls, formattedTime, *msg.Message, caller(5))
 				} else {
-					_, err = fmt.Fprintf(buf, "%s[%s] %-44s", levelString[msg.Level], time.Now().Format(t.TimestampFormat), *msg.Message)
+					_, err = fmt.Fprintf(buf, "%s[%s] %-44s", ls, formattedTime, *msg.Message)
 				}
 				if err != nil {
 					return
 				}
 				if len(nd.Data) > 0 || nd.Node != nil {
-					err = t.fmtParent(nd, lc, buf, "data")
+					err = t.fmtParent(nd, lc, buf, &ls)
 					if err != nil {
 						return
 					}
@@ -109,10 +109,10 @@ func NewTEXTFormatter() *textFormatter {
 			return
 		}
 
-		t.fmtParent = func(nd *node, lc int, buf *bytes.Buffer, key string) (err error) {
+		t.fmtParent = func(nd *node, lc int, buf *bytes.Buffer, ls *string) (err error) {
 			err = nil
 			if nd != nil {
-				_, err = fmt.Fprintf(buf, " %s={", key)
+				_, err = fmt.Fprintf(buf, " %s={", nd.key)
 				if err != nil {
 					return
 				}
@@ -128,7 +128,7 @@ func NewTEXTFormatter() *textFormatter {
 						return
 					}
 				}
-				err = t.fmtParent(nd.Node, lc, buf, nd.key)
+				err = t.fmtParent(nd.Node, lc, buf, ls)
 				if err != nil {
 					return
 				}
@@ -150,46 +150,6 @@ func (f *JSONFormatter) Format(nd *node, msg *message, buf *bytes.Buffer) (err e
 	s, err := json.Marshal(_msg)
 	_, err = buf.Write(s)
 	err = buf.WriteByte('\n')
-	return
-}
-
-func (f *JSONFormatter) fmtParent(nd *node, buf *bytes.Buffer, key string) (err error) {
-	err = nil
-	if nd != nil {
-		_, err = fmt.Fprintf(buf, `, "%s":{`, key)
-		if err != nil {
-			return
-		}
-		l := len(nd.Data)
-		i := 0
-		for k, v := range nd.Data {
-			i = i + 1
-			switch v := v.(type) {
-			case string:
-				_, err = fmt.Fprintf(buf, `"%s":"%+v"`, k, v)
-			case error:
-				_, err = fmt.Fprintf(buf, `"%s":"%s"`, k, v.Error())
-			case nil:
-				_, err = fmt.Fprintf(buf, `"%s":"nil"`, k)
-			default:
-				_, err = fmt.Fprintf(buf, `"%s":%+v`, k, v)
-			}
-			if err != nil {
-				return
-			}
-			if i < l {
-				_, err = buf.WriteString(", ")
-			}
-			if err != nil {
-				return
-			}
-		}
-		err = f.fmtParent(nd.Node, buf, nd.key)
-		if err != nil {
-			return
-		}
-		_, err = buf.WriteString("}")
-	}
 	return
 }
 

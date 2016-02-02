@@ -34,6 +34,8 @@ type Logger struct {
 	showCaller bool
 }
 
+const keyString = "Node"
+
 func NewLogger() *Logger {
 	return &Logger{
 		out:        os.Stderr,
@@ -74,21 +76,21 @@ func (logger *Logger) SetShowCaller(b bool) {
 
 func (logger *Logger) Debug(msg string, data Data) {
 	if logger.level >= DebugLevel {
-		log(&message{Message: &msg, Level: DebugLevel}, &node{logger: logger, Data: data})
+		log(&message{Message: &msg, Level: DebugLevel}, &node{logger: logger, Data: data, key: keyString})
 	}
 }
 func (logger *Logger) Info(msg string, data Data) {
 	if logger.level >= InfoLevel {
-		log(&message{Message: &msg, Level: InfoLevel}, &node{logger: logger, Data: data})
+		log(&message{Message: &msg, Level: InfoLevel}, &node{logger: logger, Data: data, key: keyString})
 	}
 }
 func (logger *Logger) Warn(msg string, data Data) {
 	if logger.level >= WarnLevel {
-		log(&message{Message: &msg, Level: WarnLevel}, &node{logger: logger, Data: data})
+		log(&message{Message: &msg, Level: WarnLevel}, &node{logger: logger, Data: data, key: keyString})
 	}
 }
 func (logger *Logger) Error(msg string, data Data) {
 	if logger.level >= ErrorLevel {
-		log(&message{Message: &msg, Level: ErrorLevel}, &node{logger: logger, Data: data})
+		log(&message{Message: &msg, Level: ErrorLevel}, &node{logger: logger, Data: data, key: keyString})
 	}
 }
