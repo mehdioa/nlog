@@ -33,6 +33,7 @@ const (
 
 var levelString = []string{"PANI", "ERRO", "WARN", "INFO", "DEBU"}
 var levelColor = []int{31, 31, 33, 34, 37}
+var levelStringLower = []string{"panic", "error", "warn", "info", "debug"}
 
 // Convert the Level to a string. E.g. PanicLevel becomes "panic".
 //func (level Level) String() string {

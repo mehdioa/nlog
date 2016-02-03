@@ -127,7 +127,7 @@ type JSONFormatter struct {
 }
 
 func (f *JSONFormatter) Format(msg *message, buf *bytes.Buffer) (err error) {
-	_msg := &_message{Time: time.Now().Format(f.TimestampFormat), Message: msg.Message, Level: levelString[msg.Level], Node: msg.Node}
+	_msg := &_message{Time: time.Now().Format(f.TimestampFormat), Message: msg.Message, Level: levelStringLower[msg.Level], Node: msg.Node, Data: msg.Data}
 	s, err := json.Marshal(_msg)
 	_, err = buf.Write(s)
 	err = buf.WriteByte('\n')
