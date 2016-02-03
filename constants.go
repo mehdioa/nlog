@@ -48,6 +48,6 @@ func checkIsTerminal() bool {
 	return err == 0
 }
 
-func DisableColor(b bool) {
+func EnableColor(b bool) {
 	isTerminal = b
 }
