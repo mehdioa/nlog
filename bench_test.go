@@ -80,7 +80,7 @@ func BenchmarkTextComplex(b *testing.B) {
 	}
 	b.StopTimer()
 }
-func BenchmarkTerminalSimple(b *testing.B) {
+func BenchmarkTextNoColorSimple(b *testing.B) {
 	l := NewLogger()
 	SetIsTerminal(false)
 	l.SetFormatter(NewTEXTFormatter())
@@ -97,7 +97,7 @@ func BenchmarkTerminalSimple(b *testing.B) {
 	b.StopTimer()
 }
 
-func BenchmarkTerminalComplex(b *testing.B) {
+func BenchmarkTextNoColorComplex(b *testing.B) {
 	l := NewLogger()
 	SetIsTerminal(false)
 	l.SetFormatter(NewTEXTFormatter())
