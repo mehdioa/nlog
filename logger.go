@@ -13,10 +13,6 @@ type Logger struct {
 	// file, or leave it default which is `os.Stderr`. You can also set this to
 	// something more adventorous, such as logging to Kafka.
 	out io.Writer
-	// Hooks for the logger instance. These allow firing events based on logging
-	// levels and log entries. For example, to send errors to an error tracking
-	// service, log to StatsD or dump the core on fatal errors.
-	hooks LevelHooks
 	// All log entries pass through the formatter before logged to Out. The
 	// included formatters are `TextFormatter` and `JSONFormatter` for which
 	// TextFormatter is the default. In development (when a TTY is attached) it
@@ -40,7 +36,6 @@ func NewLogger() *Logger {
 	return &Logger{
 		out:        os.Stderr,
 		formatter:  new(textFormatter),
-		hooks:      make(LevelHooks),
 		level:      InfoLevel,
 		showCaller: true,
 	}

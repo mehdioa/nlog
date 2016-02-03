@@ -82,7 +82,7 @@ func BenchmarkTextComplex(b *testing.B) {
 }
 func BenchmarkTextNoColorSimple(b *testing.B) {
 	l := NewLogger()
-	SetIsTerminal(false)
+	DisableColor(false)
 	l.SetFormatter(NewTEXTFormatter())
 	l.SetOut(os.Stdout)
 	l.SetShowCaller(false)
@@ -99,7 +99,7 @@ func BenchmarkTextNoColorSimple(b *testing.B) {
 
 func BenchmarkTextNoColorComplex(b *testing.B) {
 	l := NewLogger()
-	SetIsTerminal(false)
+	DisableColor(false)
 	l.SetFormatter(NewTEXTFormatter())
 	l.SetOut(os.Stdout)
 	l.SetShowCaller(false)
