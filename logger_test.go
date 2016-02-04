@@ -1,12 +1,6 @@
 package nlog
 
 import (
-	"os"
-	//	"bytes"
-	//	"encoding/json"
-	//	"strconv"
-	//	"strings"
-	//	"sync"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -29,10 +23,8 @@ import (
 //}
 
 func LogAndAssertText(t *testing.T) {
-	logger := NewLogger()
-	logger.level = DebugLevel
-	logger.SetFormatter(&textFormatter{})
-	logger.SetOut(os.Stdout)
+	j := NewTextFormatter(false, false)
+	logger := NewLogger(DebugLevel, j)
 
 	n := logger.New("Data", Data{"first": 1, "Second": "second"})
 	n.Debug("Hello", nil)

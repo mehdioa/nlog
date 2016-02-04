@@ -3,27 +3,22 @@ package main
 
 import (
 	"errors"
-	"os"
-	"time"
 
 	log "github.com/omidnikta/nlog"
 )
 
 func main() {
-	logger := log.NewLogger()
-	logger.SetLevel(log.DebugLevel)
-	f := log.NewTEXTFormatter()
-	logger.SetFormatter(f)
-	logger.SetOut(os.Stdout)
-	log.EnableColor(false)
+	f1 := log.NewTextFormatter(true, true)
+	l1 := log.NewLogger(log.DebugLevel, f1)
+	check(l1)
 
-	check(logger)
-	logger.SetFormatter(&log.JSONFormatter{TimestampFormat: time.Stamp})
-	check(logger)
-	log.EnableColor(false)
-	f = log.NewTEXTFormatter()
-	logger.SetFormatter(f)
-	check(logger)
+	f2 := log.NewJsonFormatter(true)
+	l2 := log.NewLogger(log.DebugLevel, f2)
+	check(l2)
+
+	f3 := log.NewTextFormatter(false, false)
+	l3 := log.NewLogger(log.DebugLevel, f3)
+	check(l3)
 }
 
 func check(logger *log.Logger) {

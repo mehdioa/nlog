@@ -1,7 +1,7 @@
 package nlog
 
 import (
-	"os"
+	//	"os"
 	"testing"
 )
 
@@ -19,10 +19,8 @@ var testObject = M{
 }
 
 func BenchmarkJsonSimple(b *testing.B) {
-	l := NewLogger()
-	l.SetFormatter(&JSONFormatter{TimestampFormat: DefaultTimestampFormat})
-	l.SetOut(os.Stdout)
-	l.SetShowCaller(false)
+	j := NewJsonFormatter(false)
+	l := NewLogger(DebugLevel, j)
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -35,10 +33,8 @@ func BenchmarkJsonSimple(b *testing.B) {
 }
 
 func BenchmarkJsonComplex(b *testing.B) {
-	l := NewLogger()
-	l.SetFormatter(&JSONFormatter{TimestampFormat: DefaultTimestampFormat})
-	l.SetOut(os.Stdout)
-	l.SetShowCaller(false)
+	j := NewJsonFormatter(false)
+	l := NewLogger(DebugLevel, j)
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -50,10 +46,8 @@ func BenchmarkJsonComplex(b *testing.B) {
 	b.StopTimer()
 }
 func BenchmarkTextSimple(b *testing.B) {
-	l := NewLogger()
-	l.SetFormatter(NewTEXTFormatter())
-	l.SetOut(os.Stdout)
-	l.SetShowCaller(false)
+	j := NewTextFormatter(true, true)
+	l := NewLogger(DebugLevel, j)
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -66,10 +60,8 @@ func BenchmarkTextSimple(b *testing.B) {
 }
 
 func BenchmarkTextComplex(b *testing.B) {
-	l := NewLogger()
-	l.SetFormatter(NewTEXTFormatter())
-	l.SetOut(os.Stdout)
-	l.SetShowCaller(false)
+	j := NewTextFormatter(true, true)
+	l := NewLogger(DebugLevel, j)
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -81,11 +73,8 @@ func BenchmarkTextComplex(b *testing.B) {
 	b.StopTimer()
 }
 func BenchmarkTextNoColorSimple(b *testing.B) {
-	l := NewLogger()
-	DisableColor(false)
-	l.SetFormatter(NewTEXTFormatter())
-	l.SetOut(os.Stdout)
-	l.SetShowCaller(false)
+	j := NewTextFormatter(false, false)
+	l := NewLogger(DebugLevel, j)
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -98,11 +87,8 @@ func BenchmarkTextNoColorSimple(b *testing.B) {
 }
 
 func BenchmarkTextNoColorComplex(b *testing.B) {
-	l := NewLogger()
-	DisableColor(false)
-	l.SetFormatter(NewTEXTFormatter())
-	l.SetOut(os.Stdout)
-	l.SetShowCaller(false)
+	j := NewTextFormatter(false, false)
+	l := NewLogger(DebugLevel, j)
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {

@@ -26,29 +26,32 @@ type Logger struct {
 	level Level
 	// Used to sync writing to the log.
 	mu sync.Mutex
-
-	showCaller bool
 }
 
 const keyString = "Node"
 
-func NewLogger() *Logger {
+func NewLogger(level Level, f Formatter) *Logger {
 	return &Logger{
-		out:        os.Stderr,
-		formatter:  new(textFormatter),
-		level:      InfoLevel,
-		showCaller: true,
+		out:       os.Stdout,
+		formatter: f,
+		level:     level,
 	}
 }
 
-func (logger *Logger) New(key string, data Data) *node {
-	return &node{logger: logger, Node: nil, Data: data, key: key}
-}
+func (logger *Logger) log(m *message) {
+	buf := pool.Get()
+	defer pool.Put(buf)
 
-func (logger *Logger) SetFormatter(formatter Formatter) {
+	logger.formatter.Format(m, buf)
+
 	logger.mu.Lock()
 	defer logger.mu.Unlock()
-	logger.formatter = formatter
+
+	io.Copy(logger.out, buf)
+}
+
+func (logger *Logger) New(key string, data Data) *Node {
+	return &Node{logger: logger, Node: nil, Data: data, key: key}
 }
 
 func (logger *Logger) SetOut(out io.Writer) {
@@ -57,59 +60,47 @@ func (logger *Logger) SetOut(out io.Writer) {
 	logger.out = out
 }
 
-func (logger *Logger) SetLevel(level Level) {
-	logger.mu.Lock()
-	defer logger.mu.Unlock()
-	logger.level = level
-}
-
-func (logger *Logger) SetShowCaller(b bool) {
-	logger.mu.Lock()
-	defer logger.mu.Unlock()
-	logger.showCaller = b
-}
-
 func (logger *Logger) Debug(msg string, data Data) {
 	if logger.level >= DebugLevel {
-		log(&message{Message: &msg, Level: DebugLevel, Data: data, Node: nil, logger: logger})
+		logger.log(&message{Message: &msg, Level: DebugLevel, Data: data, Node: nil})
 	}
 }
 func (logger *Logger) Info(msg string, data Data) {
 	if logger.level >= InfoLevel {
-		log(&message{Message: &msg, Level: InfoLevel, Data: data, Node: nil, logger: logger})
+		logger.log(&message{Message: &msg, Level: InfoLevel, Data: data, Node: nil})
 	}
 }
 func (logger *Logger) Warn(msg string, data Data) {
 	if logger.level >= WarnLevel {
-		log(&message{Message: &msg, Level: WarnLevel, Data: data, Node: nil, logger: logger})
+		logger.log(&message{Message: &msg, Level: WarnLevel, Data: data, Node: nil})
 	}
 }
 func (logger *Logger) Error(msg string, data Data) {
 	if logger.level >= ErrorLevel {
-		log(&message{Message: &msg, Level: ErrorLevel, Data: data, Node: nil, logger: logger})
+		logger.log(&message{Message: &msg, Level: ErrorLevel, Data: data, Node: nil})
 	}
 }
 func (logger *Logger) Debugf(f string, args ...interface{}) {
 	if logger.level >= DebugLevel {
 		m := fmt.Sprintf(f, args...)
-		log(&message{Message: &m, Level: DebugLevel, Data: nil, Node: nil, logger: logger})
+		logger.log(&message{Message: &m, Level: DebugLevel, Data: nil, Node: nil})
 	}
 }
 func (logger *Logger) Infof(f string, args ...interface{}) {
 	if logger.level >= InfoLevel {
 		m := fmt.Sprintf(f, args...)
-		log(&message{Message: &m, Level: InfoLevel, Data: nil, Node: nil, logger: logger})
+		logger.log(&message{Message: &m, Level: InfoLevel, Data: nil, Node: nil})
 	}
 }
 func (logger *Logger) Warnf(f string, args ...interface{}) {
 	if logger.level >= WarnLevel {
 		m := fmt.Sprintf(f, args...)
-		log(&message{Message: &m, Level: WarnLevel, Data: nil, Node: nil, logger: logger})
+		logger.log(&message{Message: &m, Level: WarnLevel, Data: nil, Node: nil})
 	}
 }
 func (logger *Logger) Errorf(f string, args ...interface{}) {
 	if logger.level >= ErrorLevel {
 		m := fmt.Sprintf(f, args...)
-		log(&message{Message: &m, Level: ErrorLevel, Data: nil, Node: nil, logger: logger})
+		logger.log(&message{Message: &m, Level: ErrorLevel, Data: nil, Node: nil})
 	}
 }
