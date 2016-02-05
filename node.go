@@ -3,6 +3,7 @@ package nlog
 
 import (
 	"fmt"
+	"os"
 )
 
 type Data map[string]interface{}
@@ -63,10 +64,17 @@ func (n *Node) Error(msg string, data Data) {
 	}
 }
 func (n *Node) Panic(msg string, data Data) {
-	if n.logger.level >= ErrorLevel {
-		_msg := message{Message: &msg, Level: ErrorLevel, Node: n, Data: data}
+	if n.logger.level >= PanicLevel {
+		_msg := message{Message: &msg, Level: PanicLevel, Node: n, Data: data}
 		n.logger.log(&_msg)
 		panic(_msg)
+	}
+}
+func (n *Node) Fatal(msg string, data Data) {
+	if n.logger.level >= FatalLevel {
+		_msg := message{Message: &msg, Level: FatalLevel, Node: n, Data: data}
+		n.logger.log(&_msg)
+		os.Exit(1)
 	}
 }
 func (n *Node) Debugf(f string, args ...interface{}) {
@@ -96,8 +104,16 @@ func (n *Node) Errorf(f string, args ...interface{}) {
 func (n *Node) Panicf(f string, args ...interface{}) {
 	if n.logger.level >= PanicLevel {
 		msg := fmt.Sprintf(f, args...)
-		_msg := message{Message: &msg, Level: ErrorLevel, Node: n, Data: nil}
+		_msg := message{Message: &msg, Level: PanicLevel, Node: n, Data: nil}
 		n.logger.log(&_msg)
 		panic(_msg)
+	}
+}
+func (n *Node) Fatalf(f string, args ...interface{}) {
+	if n.logger.level >= FatalLevel {
+		msg := fmt.Sprintf(f, args...)
+		_msg := message{Message: &msg, Level: FatalLevel, Node: n, Data: nil}
+		n.logger.log(&_msg)
+		os.Exit(1)
 	}
 }

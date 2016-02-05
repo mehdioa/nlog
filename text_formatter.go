@@ -32,7 +32,7 @@ func NewTextFormatter(show_caller, enable_color bool) *textFormatter {
 		defaultFG = "\x1b[39m"
 		nodeFG = "\x1b[96m"
 	}
-	for i := PanicLevel; i < lastIndexLevel; i++ {
+	for i := FatalLevel; i < lastIndexLevel; i++ {
 		lc := levelColor[i]
 		if enable_color {
 			levColFG = fmt.Sprintf("\x1b[%dm", lc)

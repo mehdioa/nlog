@@ -87,6 +87,13 @@ func (logger *Logger) Panic(msg string, data Data) {
 		panic(_msg)
 	}
 }
+func (logger *Logger) Fatal(msg string, data Data) {
+	if logger.level >= FatalLevel {
+		_msg := message{Message: &msg, Level: FatalLevel, Data: data, Node: nil}
+		logger.log(&_msg)
+		os.Exit(1)
+	}
+}
 
 func (logger *Logger) Debugf(f string, args ...interface{}) {
 	if logger.level >= DebugLevel {
@@ -115,7 +122,14 @@ func (logger *Logger) Errorf(f string, args ...interface{}) {
 func (logger *Logger) Panicf(f string, args ...interface{}) {
 	if logger.level >= PanicLevel {
 		m := fmt.Sprintf(f, args...)
-		logger.log(&message{Message: &m, Level: ErrorLevel, Data: nil, Node: nil})
+		logger.log(&message{Message: &m, Level: PanicLevel, Data: nil, Node: nil})
 		panic(m)
+	}
+}
+func (logger *Logger) Fatalf(f string, args ...interface{}) {
+	if logger.level >= FatalLevel {
+		m := fmt.Sprintf(f, args...)
+		logger.log(&message{Message: &m, Level: FatalLevel, Data: nil, Node: nil})
+		os.Exit(1)
 	}
 }
