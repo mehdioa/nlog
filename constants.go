@@ -32,9 +32,9 @@ const (
 	lastIndexLevel
 )
 
-var levelString = []string{"PANI", "ERRO", "WARN", "INFO", "DEBU"}
-var levelColor = []int{31, 31, 33, 34, 37}
-var levelStringLower = []string{"panic", "error", "warn", "info", "debug"}
+var levelString = []string{"FATA", "PANI", "ERRO", "WARN", "INFO", "DEBU"}
+var levelColor = []int{31, 31, 31, 33, 34, 37}
+var levelStringLower = []string{"fatal", "panic", "error", "warn", "info", "debug"}
 
 var isTerminal bool
 
