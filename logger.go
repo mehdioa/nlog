@@ -80,6 +80,14 @@ func (logger *Logger) Error(msg string, data Data) {
 		logger.log(&message{Message: &msg, Level: ErrorLevel, Data: data, Node: nil})
 	}
 }
+func (logger *Logger) Panic(msg string, data Data) {
+	if logger.level >= PanicLevel {
+		_msg := message{Message: &msg, Level: PanicLevel, Data: data, Node: nil}
+		logger.log(&_msg)
+		panic(_msg)
+	}
+}
+
 func (logger *Logger) Debugf(f string, args ...interface{}) {
 	if logger.level >= DebugLevel {
 		m := fmt.Sprintf(f, args...)
@@ -102,5 +110,12 @@ func (logger *Logger) Errorf(f string, args ...interface{}) {
 	if logger.level >= ErrorLevel {
 		m := fmt.Sprintf(f, args...)
 		logger.log(&message{Message: &m, Level: ErrorLevel, Data: nil, Node: nil})
+	}
+}
+func (logger *Logger) Panicf(f string, args ...interface{}) {
+	if logger.level >= PanicLevel {
+		m := fmt.Sprintf(f, args...)
+		logger.log(&message{Message: &m, Level: ErrorLevel, Data: nil, Node: nil})
+		panic(m)
 	}
 }

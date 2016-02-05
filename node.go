@@ -62,6 +62,13 @@ func (n *Node) Error(msg string, data Data) {
 		n.logger.log(&message{Message: &msg, Level: ErrorLevel, Node: n, Data: data})
 	}
 }
+func (n *Node) Panic(msg string, data Data) {
+	if n.logger.level >= ErrorLevel {
+		_msg := message{Message: &msg, Level: ErrorLevel, Node: n, Data: data}
+		n.logger.log(&_msg)
+		panic(_msg)
+	}
+}
 func (n *Node) Debugf(f string, args ...interface{}) {
 	if n.logger.level >= DebugLevel {
 		msg := fmt.Sprintf(f, args...)
@@ -84,5 +91,13 @@ func (n *Node) Errorf(f string, args ...interface{}) {
 	if n.logger.level >= ErrorLevel {
 		msg := fmt.Sprintf(f, args...)
 		n.logger.log(&message{Message: &msg, Level: ErrorLevel, Node: n, Data: nil})
+	}
+}
+func (n *Node) Panicf(f string, args ...interface{}) {
+	if n.logger.level >= PanicLevel {
+		msg := fmt.Sprintf(f, args...)
+		_msg := message{Message: &msg, Level: ErrorLevel, Node: n, Data: nil}
+		n.logger.log(&_msg)
+		panic(_msg)
 	}
 }
