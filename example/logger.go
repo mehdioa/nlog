@@ -22,11 +22,13 @@ func main() {
 }
 
 func check(logger *log.Logger) {
-	m := logger.New("Parent", log.Data{"first": 1, "Second": "second"})
-	m.Debug("Hello", nil)
-	n := m.NewNode("Child", log.Data{"alef": nil, "yek": errors.New("my error")})
-	n.Debug("Hello", nil)
-	n.Info("Hello", nil)
+	m := logger.New("Server", log.Data{"Protocol": "tcp", "Port": 12542})
+	m.Debugf("Server is serving")
+	n := m.NewNode("Client", log.Data{"RemoteAddr": "[::1]9183", "error": nil})
+	n.Infof("Client is serving")
+	n.Warnf("Client is not serving")
+	m.Errorf("Error is listening")
+	m.Fatalf("Server encounter a fatal error")
 	n.Warn("Hello", nil)
 	n.Error("Hello", nil)
 	n.Debugf("Hello %d", 32)
