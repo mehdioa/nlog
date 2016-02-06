@@ -42,15 +42,15 @@ func NewTextFormatter(show_caller, enable_color bool) *textFormatter {
 		t.fmtNode[i] = fmt.Sprintf(" %s%s%s ", nodeFG, "%s", defaultFG)
 		t.fmtData[i] = fmt.Sprintf("%s%s%s=%s ", levColFG, "%s", defaultFG, "%+v")
 	}
-	formattedTime := time.Now().Format(t.TimestampFormat)
+	//	formattedTime := time.Now().Format(t.TimestampFormat)
 
 	if show_caller {
 		t.fmtMsg = func(msg *message, buf *bytes.Buffer, l Level, ls *string) {
-			fmt.Fprintf(buf, t.fmtFirstShowCaller[l], *ls, formattedTime, *msg.Message, caller(6))
+			fmt.Fprintf(buf, t.fmtFirstShowCaller[l], *ls, time.Now().Format(t.TimestampFormat), *msg.Message, caller(6))
 		}
 	} else {
 		t.fmtMsg = func(msg *message, buf *bytes.Buffer, l Level, ls *string) {
-			fmt.Fprintf(buf, t.fmtFirst[l], *ls, formattedTime, *msg.Message)
+			fmt.Fprintf(buf, t.fmtFirst[l], *ls, time.Now().Format(t.TimestampFormat), *msg.Message)
 		}
 	}
 
