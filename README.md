@@ -30,14 +30,14 @@ func main() {
 The built-in logging formatters are:
 
 * `nlog.NewTextFormatter(show_caller, enable_color bool)`.
-* `NewJsonFormatter(show_caller bool)`. Logs fields as JSON.
+* `nlog.NewJsonFormatter(show_caller bool)`. Logs fields as JSON.
 
 
 ### Use NLog in your library
 
 The best way to use nlog in your library is to define
 
-``` go
+```go
 package customPackage
 
 import "github.com/omidnikta/nlog"
@@ -52,7 +52,7 @@ func SetLogger(logger *nlog.Logger) {
 and then use this log in your library. Just remember to 
 initialize a Logger in your application and call
 
-```
+```go
 package main
 
 import "customPackage"
