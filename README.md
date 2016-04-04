@@ -1,7 +1,18 @@
 # nlog
-Node Logger, Yet Another Logger For Golang
+Node Logger, fast and thread-safe logger for Golang
 
 ![Colored](http://i.imgur.com/4V3pR7B.png?1)
+
+Node Logger is KISS (Keep It Simple, Stupid) logger that  
+suits most people. It is much faster than Logrus and Logxi, and
+asymtotically as fast as Logxi.
+
+The motivation for writing this logger is that none of the other
+loggers seems to be thread-safe and even they are buggy. 
+I sacrificed fancy features in favour of performance and safety. 
+
+Please feel free to suggest
+features and pull requests. 
 
 #### Example
 
