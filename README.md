@@ -14,6 +14,9 @@ I sacrificed fancy features in favour of performance and safety.
 Please feel free to suggest
 features and pull requests. 
 
+#### Install
+	go get github.com/omidnikta/nlog
+
 #### Example
 
 ```go
