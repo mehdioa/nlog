@@ -51,7 +51,7 @@ func (logger *Logger) log(m *message) {
 }
 
 func (logger *Logger) New(key string, data Data) *Node {
-	return &Node{logger: logger, Node: nil, Data: data, key: key}
+	return &Node{logger: logger, node: nil, data: data, key: key}
 }
 
 func (logger *Logger) SetOut(out io.Writer) {
@@ -62,34 +62,34 @@ func (logger *Logger) SetOut(out io.Writer) {
 
 func (logger *Logger) Debug(msg string, data Data) {
 	if logger.level >= DebugLevel {
-		logger.log(&message{Message: &msg, Level: DebugLevel, Data: data, Node: nil})
+		logger.log(&message{message: &msg, level: DebugLevel, data: data, node: nil})
 	}
 }
 func (logger *Logger) Info(msg string, data Data) {
 	if logger.level >= InfoLevel {
-		logger.log(&message{Message: &msg, Level: InfoLevel, Data: data, Node: nil})
+		logger.log(&message{message: &msg, level: InfoLevel, data: data, node: nil})
 	}
 }
 func (logger *Logger) Warn(msg string, data Data) {
 	if logger.level >= WarnLevel {
-		logger.log(&message{Message: &msg, Level: WarnLevel, Data: data, Node: nil})
+		logger.log(&message{message: &msg, level: WarnLevel, data: data, node: nil})
 	}
 }
 func (logger *Logger) Error(msg string, data Data) {
 	if logger.level >= ErrorLevel {
-		logger.log(&message{Message: &msg, Level: ErrorLevel, Data: data, Node: nil})
+		logger.log(&message{message: &msg, level: ErrorLevel, data: data, node: nil})
 	}
 }
 func (logger *Logger) Panic(msg string, data Data) {
 	if logger.level >= PanicLevel {
-		_msg := message{Message: &msg, Level: PanicLevel, Data: data, Node: nil}
+		_msg := message{message: &msg, level: PanicLevel, data: data, node: nil}
 		logger.log(&_msg)
 		panic(_msg)
 	}
 }
 func (logger *Logger) Fatal(msg string, data Data) {
 	if logger.level >= FatalLevel {
-		_msg := message{Message: &msg, Level: FatalLevel, Data: data, Node: nil}
+		_msg := message{message: &msg, level: FatalLevel, data: data, node: nil}
 		logger.log(&_msg)
 		os.Exit(1)
 	}
@@ -98,38 +98,38 @@ func (logger *Logger) Fatal(msg string, data Data) {
 func (logger *Logger) Debugf(f string, args ...interface{}) {
 	if logger.level >= DebugLevel {
 		m := fmt.Sprintf(f, args...)
-		logger.log(&message{Message: &m, Level: DebugLevel, Data: nil, Node: nil})
+		logger.log(&message{message: &m, level: DebugLevel, data: nil, node: nil})
 	}
 }
 func (logger *Logger) Infof(f string, args ...interface{}) {
 	if logger.level >= InfoLevel {
 		m := fmt.Sprintf(f, args...)
-		logger.log(&message{Message: &m, Level: InfoLevel, Data: nil, Node: nil})
+		logger.log(&message{message: &m, level: InfoLevel, data: nil, node: nil})
 	}
 }
 func (logger *Logger) Warnf(f string, args ...interface{}) {
 	if logger.level >= WarnLevel {
 		m := fmt.Sprintf(f, args...)
-		logger.log(&message{Message: &m, Level: WarnLevel, Data: nil, Node: nil})
+		logger.log(&message{message: &m, level: WarnLevel, data: nil, node: nil})
 	}
 }
 func (logger *Logger) Errorf(f string, args ...interface{}) {
 	if logger.level >= ErrorLevel {
 		m := fmt.Sprintf(f, args...)
-		logger.log(&message{Message: &m, Level: ErrorLevel, Data: nil, Node: nil})
+		logger.log(&message{message: &m, level: ErrorLevel, data: nil, node: nil})
 	}
 }
 func (logger *Logger) Panicf(f string, args ...interface{}) {
 	if logger.level >= PanicLevel {
 		m := fmt.Sprintf(f, args...)
-		logger.log(&message{Message: &m, Level: PanicLevel, Data: nil, Node: nil})
+		logger.log(&message{message: &m, level: PanicLevel, data: nil, node: nil})
 		panic(m)
 	}
 }
 func (logger *Logger) Fatalf(f string, args ...interface{}) {
 	if logger.level >= FatalLevel {
 		m := fmt.Sprintf(f, args...)
-		logger.log(&message{Message: &m, Level: FatalLevel, Data: nil, Node: nil})
+		logger.log(&message{message: &m, level: FatalLevel, data: nil, node: nil})
 		os.Exit(1)
 	}
 }

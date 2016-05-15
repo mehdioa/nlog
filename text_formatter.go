@@ -46,28 +46,28 @@ func NewTextFormatter(show_caller, enable_color bool) *textFormatter {
 
 	if show_caller {
 		t.fmtMsg = func(msg *message, buf *bytes.Buffer, l Level, ls *string) {
-			fmt.Fprintf(buf, t.fmtFirstShowCaller[l], *ls, time.Now().Format(t.TimestampFormat), *msg.Message, caller(6))
+			fmt.Fprintf(buf, t.fmtFirstShowCaller[l], *ls, time.Now().Format(t.TimestampFormat), *msg.message, caller(6))
 		}
 	} else {
 		t.fmtMsg = func(msg *message, buf *bytes.Buffer, l Level, ls *string) {
-			fmt.Fprintf(buf, t.fmtFirst[l], *ls, time.Now().Format(t.TimestampFormat), *msg.Message)
+			fmt.Fprintf(buf, t.fmtFirst[l], *ls, time.Now().Format(t.TimestampFormat), *msg.message)
 		}
 	}
 
 	t.fmt = func(msg *message, buf *bytes.Buffer) {
-		ls := levelString[msg.Level]
-		l := msg.Level
+		ls := levelString[msg.level]
+		l := msg.level
 		if msg != nil {
 			t.fmtMsg(msg, buf, l, &ls)
-			nd := &Node{key: keyString, Node: msg.Node, Data: msg.Data}
+			nd := &Node{key: keyString, node: msg.node, data: msg.data}
 			for nd != nil {
-				if nd.Data != nil && len(nd.Data) > 0 {
+				if nd.data != nil && len(nd.data) > 0 {
 					fmt.Fprintf(buf, t.fmtNode[l], nd.key)
-					for k, v := range nd.Data {
+					for k, v := range nd.data {
 						fmt.Fprintf(buf, t.fmtData[l], k, v)
 					}
 				}
-				nd = nd.Node
+				nd = nd.node
 			}
 			buf.WriteByte('\n')
 		}

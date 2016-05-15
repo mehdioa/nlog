@@ -17,7 +17,7 @@ func NewJsonFormatter(show_caller bool) *jsonFormatter {
 	j := &jsonFormatter{TimestampFormat: DefaultTimestampFormat}
 	if show_caller {
 		j.fmt = func(msg *message, buf *bytes.Buffer) {
-			_msg := &_sc_message{Time: time.Now().Format(j.TimestampFormat), Message: msg.Message, Level: levelStringLower[msg.Level], Caller: caller(5), Node: msg.Node, Data: msg.Data}
+			_msg := &_sc_message{time: time.Now().Format(j.TimestampFormat), message: msg.message, level: levelStringLower[msg.level], caller: caller(5), node: msg.node, data: msg.data}
 			s, _ := json.Marshal(_msg)
 			buf.Write(s)
 			buf.WriteByte('\n')
@@ -25,7 +25,7 @@ func NewJsonFormatter(show_caller bool) *jsonFormatter {
 
 	} else {
 		j.fmt = func(msg *message, buf *bytes.Buffer) {
-			_msg := &_message{Time: time.Now().Format(j.TimestampFormat), Message: msg.Message, Level: levelStringLower[msg.Level], Node: msg.Node, Data: msg.Data}
+			_msg := &_message{time: time.Now().Format(j.TimestampFormat), message: msg.message, level: levelStringLower[msg.level], node: msg.node, data: msg.data}
 			s, _ := json.Marshal(_msg)
 			buf.Write(s)
 			buf.WriteByte('\n')
