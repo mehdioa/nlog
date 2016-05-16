@@ -4,7 +4,7 @@ package main
 import (
 	"errors"
 
-	log "github.com/omidnikta/nlog"
+	log "github.com/mehdioa/nlog"
 )
 
 func main() {
