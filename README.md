@@ -15,14 +15,14 @@ Please feel free to suggest
 features and pull requests. 
 
 #### Install
-	go get github.com/omidnikta/nlog
+	go get github.com/mehdioa/nlog
 
 #### Example
 
 ```go
 package main
 
-import "github.com/omidnikta/nlog"
+import "github.com/mehdioa/nlog"
 
 var log *nlog.Logger
 
@@ -54,7 +54,7 @@ The best way to use nlog in your library is to define
 ```go
 package customPackage
 
-import "github.com/omidnikta/nlog"
+import "github.com/mehdioa/nlog"
 
 var log *nlog.Logger
 
