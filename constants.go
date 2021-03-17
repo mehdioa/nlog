@@ -1,12 +1,5 @@
-// +build darwin dragonfly freebsd linux,!appengine netbsd openbsd
-
 // constants
 package nlog
-
-import (
-	"syscall"
-	"unsafe"
-)
 
 var pool = NewBufferPool()
 
@@ -44,9 +37,9 @@ func init() {
 	isTerminal = checkIsTerminal()
 }
 
-func checkIsTerminal() bool {
-	fd := syscall.Stderr
-	var termios syscall.Termios
-	_, _, err := syscall.Syscall6(syscall.SYS_IOCTL, uintptr(fd), ioctlReadTermios, uintptr(unsafe.Pointer(&termios)), 0, 0, 0)
-	return err == 0
-}
+// func checkIsTerminal() bool {
+// 	fd := syscall.Stderr
+// 	var termios syscall.Termios
+// 	_, _, err := syscall.Syscall6(syscall.SYS_IOCTL, uintptr(fd), ioctlReadTermios, uintptr(unsafe.Pointer(&termios)), 0, 0, 0)
+// 	return err == 0
+// }
