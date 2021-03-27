@@ -36,3 +36,19 @@ var isTerminal bool
 func init() {
 	isTerminal = checkIsTerminal()
 }
+
+func StringToLevel(level string) Level {
+	switch level {
+	case "panic":
+		return PanicLevel
+	case "error":
+		return ErrorLevel
+	case "warn":
+		return WarnLevel
+	case "info":
+		return InfoLevel
+	case "debug":
+		return DebugLevel
+	}
+	return FatalLevel
+}
